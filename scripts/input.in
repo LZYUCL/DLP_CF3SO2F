@@ -1,0 +1,41 @@
+clear
+shell mkdir traj
+variable        NSTEPS          equal 1000000
+variable        THERMO_FREQ     equal 10
+variable        DUMP_FREQ       equal 10
+variable        TEMP            equal 3200.000000
+variable        PRES            equal -1.000000
+variable        TAU_T           equal 0.100000
+variable        TAU_P           equal 0.500000
+
+units           metal
+boundary        p p p
+atom_style      atomic
+
+neighbor        1.0 bin
+
+box          tilt large
+read_data input.data
+change_box   all triclinic
+mass            1 12.010700
+mass            2 32.065000
+mass            3 18.998403
+mass            4 15.999400
+pair_style      deepmd graph.pb
+pair_coeff      * *
+
+thermo_style    custom step temp pe ke etotal press vol lx ly lz xy xz yz density
+thermo          ${THERMO_FREQ}
+dump            1 all custom 100 traj/dump.eq*.cfg id type x y z
+
+velocity        all create 300 266059
+fix             1 all nvt temp 300 300 ${TAU_T}
+timestep        0.001000
+run             1000
+undump 1
+unfix 1
+
+dump            2 all custom 100 traj/dump.temp*.cfg id type x y z
+fix             2 all nvt temp ${TEMP} ${TEMP} ${TAU_T}
+timestep        0.001000
+run             ${NSTEPS}
