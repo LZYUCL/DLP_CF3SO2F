@@ -19,7 +19,7 @@ Dynamics"*.
 
   *
 
-    |models/|: Pre-trained neural network potential model
+    |models/|: Deep neural network potential model
 
   *
 
@@ -49,4 +49,5 @@ environment includes:
   *
 
     PyTorch or TensorFlow
+
 
